@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import { useState } from "react";
-import { SlideDown } from "react-slidedown";
-import "react-slidedown/lib/slidedown.css";
+import { useFloating } from "@floating-ui/react";
+import PropTypes from "prop-types";
 
 const FaqItem = ({ item, index }) => {
   const [activeId, setActiveId] = useState(null);
-
+  const { refs } = useFloating();
   const active = activeId === item.id;
 
   return (
@@ -41,11 +41,15 @@ const FaqItem = ({ item, index }) => {
         </div>
       </div>
 
-      <SlideDown>
-        {activeId === item.id && (
-          <div className="body-3 px-7 py-3.5">{item.answer}</div>
+      <div
+        ref={refs.setFloating}
+        className={clsx(
+          "overflow-hidden transition-all duration-500",
+          active ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         )}
-      </SlideDown>
+      >
+        <div className="body-3 px-7 py-3.5">{item.answer}</div>
+      </div>
 
       <div
         className={clsx(
@@ -59,4 +63,14 @@ const FaqItem = ({ item, index }) => {
     </div>
   );
 };
+
+FaqItem.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    question: PropTypes.string.isRequired,
+    answer: PropTypes.string.isRequired,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+};
+
 export default FaqItem;
